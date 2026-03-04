@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Deep Research of Deep Research</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+    .container {
+      max-width: 720px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 48px;
+      font-size: 0.95rem;
+    }
+    .reports {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .report-card {
+      display: block;
+      padding: 24px 28px;
+      background: #1a1a2e;
+      border: 1px solid #2a2a40;
+      border-radius: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .report-card:hover {
+      transform: translateY(-2px);
+      border-color: #60a5fa;
+      box-shadow: 0 4px 24px rgba(96, 165, 250, 0.12);
+    }
+    .report-card .provider {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .report-card .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f0f0f0;
+    }
+    .report-card .desc {
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: #999;
+      line-height: 1.5;
+    }
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      color: #555;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>The Deep Research of Deep Research</h1>
+    <p class="subtitle">Comparative analysis of Deep Research capabilities across major LLM platforms</p>
+    <div class="reports">
+      <a class="report-card" href="viewer.html?file=deep-research-of-deep-research/deep-research-report-chatgpt.md&provider=ChatGPT">
+        <div class="provider">ChatGPT</div>
+        <div class="title">ChatGPT's 大语言模型 Deep Research 功能综合分析报告</div>
+        <div class="desc">Executive summary comparing Deep Research across Google Gemini, OpenAI, Claude, Perplexity, Kimi, and DeepSeek.</div>
+      </a>
+      <a class="report-card" href="viewer.html?file=deep-research-of-deep-research/research-report-claude.md&provider=Claude">
+        <div class="provider">Claude</div>
+        <div class="title">Claude's 大语言模型 Deep Research 功能综合分析报告</div>
+        <div class="desc">Multi-dimensional comparison ranking ChatGPT and Gemini in the first tier, with detailed breakdowns by use case.</div>
+      </a>
+      <a class="report-card" href="viewer.html?file=deep-research-of-deep-research/DeepSeek_Deep_Research_Report.md&provider=DeepSeek">
+        <div class="provider">DeepSeek</div>
+        <div class="title">DeepSeek's 大语言模型 Deep Research 功能综合分析报告</div>
+        <div class="desc">Third-party evaluation results and task-specific performance analysis across leading Deep Research platforms.</div>
+      </a>
+      <a class="report-card" href="viewer.html?file=deep-research-of-deep-research/Deep-Research-Report-kimi.md&provider=Kimi">
+        <div class="provider">Kimi</div>
+        <div class="title">Kimi's 大语言模型 Deep Research 功能综合分析报告</div>
+        <div class="desc">Core technical architecture and feature definitions of Deep Research across the industry.</div>
+      </a>
+      <a class="report-card" href="viewer.html?file=deep-research-of-deep-research/Perplexity_Deep_Research_Report.md&provider=Perplexity">
+        <div class="provider">Perplexity</div>
+        <div class="title">Perplexity's 大语言模型 Deep Research 功能综合分析报告</div>
+        <div class="desc">Trend analysis and comparative review, noting ChatGPT's edge in English technical research scenarios.</div>
+      </a>
+    </div>
+    <footer>mofa-research</footer>
+  </div>
+</body>
+</html>

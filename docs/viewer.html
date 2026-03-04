@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-dark.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1117;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 17, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #21262d;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .topbar a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s;
+    }
+    .topbar a:hover { color: #93c5fd; }
+    .topbar .provider-badge {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: #1a1a2e;
+      border: 1px solid #2a2a40;
+      color: #a78bfa;
+    }
+    .topbar .doc-title {
+      font-size: 0.9rem;
+      color: #ccc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Reading progress bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
+      width: 0%;
+      z-index: 200;
+      transition: width 0.1s linear;
+    }
+
+    /* Content area */
+    .markdown-body {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+    }
+    .markdown-body h1:first-child { display: none; } /* hide duplicate title */
+    .markdown-body h1,
+    .markdown-body h2 {
+      border-bottom-color: #21262d;
+    }
+    .markdown-body table {
+      display: table;
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 16px;
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #21262d;
+      border-top-color: #60a5fa;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error state */
+    .error {
+      text-align: center;
+      padding: 80px 20px;
+      color: #f87171;
+    }
+
+    /* Table of contents */
+    .toc-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1a1a2e;
+      border: 1px solid #2a2a40;
+      color: #60a5fa;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s, border-color 0.15s;
+      z-index: 100;
+    }
+    .toc-toggle:hover {
+      transform: scale(1.08);
+      border-color: #60a5fa;
+    }
+    .toc-panel {
+      position: fixed;
+      bottom: 84px;
+      right: 24px;
+      width: 320px;
+      max-height: 60vh;
+      overflow-y: auto;
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      padding: 16px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 100;
+      display: none;
+    }
+    .toc-panel.open { display: block; }
+    .toc-panel .toc-title {
+      padding: 0 20px 12px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      border-bottom: 1px solid #21262d;
+      margin-bottom: 8px;
+    }
+    .toc-panel a {
+      display: block;
+      padding: 6px 20px;
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      transition: color 0.1s, background 0.1s;
+    }
+    .toc-panel a:hover {
+      color: #60a5fa;
+      background: rgba(96, 165, 250, 0.06);
+    }
+    .toc-panel a.depth-2 { padding-left: 20px; font-weight: 600; }
+    .toc-panel a.depth-3 { padding-left: 36px; }
+    .toc-panel a.depth-4 { padding-left: 52px; font-size: 0.8rem; }
+
+    /* Scroll to top */
+    .scroll-top {
+      position: fixed;
+      bottom: 24px;
+      right: 84px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1a1a2e;
+      border: 1px solid #2a2a40;
+      color: #888;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s, border-color 0.15s, color 0.15s;
+      z-index: 100;
+    }
+    .scroll-top.visible { display: flex; }
+    .scroll-top:hover {
+      transform: scale(1.08);
+      border-color: #60a5fa;
+      color: #60a5fa;
+    }
+
+    @media (max-width: 640px) {
+      .markdown-body { padding: 24px 16px 60px; }
+      .toc-panel { width: calc(100vw - 48px); right: 12px; bottom: 76px; }
+      .toc-toggle, .scroll-top { bottom: 16px; }
+      .toc-toggle { right: 16px; }
+      .scroll-top { right: 76px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <div class="topbar">
+    <a href="index.html">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.78 1.97a.75.75 0 0 0-1.06 0L.47 8.22a.75.75 0 0 0 0 1.06l6.25 6.25a.75.75 0 0 0 1.06-1.06L2.56 9.25H14.5a.75.75 0 0 0 0-1.5H2.56l5.22-5.22a.75.75 0 0 0 0-1.06z"/></svg>
+      Back
+    </a>
+    <span class="provider-badge" id="providerBadge"></span>
+    <span class="doc-title" id="docTitle"></span>
+  </div>
+
+  <article class="markdown-body" id="content">
+    <div class="loading">
+      <div class="spinner"></div>
+      <span style="color:#666">Loading report...</span>
+    </div>
+  </article>
+
+  <button class="scroll-top" id="scrollTop" title="Scroll to top">&#8593;</button>
+  <button class="toc-toggle" id="tocToggle" title="Table of Contents">&#9776;</button>
+  <div class="toc-panel" id="tocPanel">
+    <div class="toc-title">Table of Contents</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const file = params.get('file');
+    const provider = params.get('provider') || '';
+
+    const providerBadge = document.getElementById('providerBadge');
+    const docTitle = document.getElementById('docTitle');
+    const contentEl = document.getElementById('content');
+    const tocPanel = document.getElementById('tocPanel');
+    const tocToggle = document.getElementById('tocToggle');
+    const scrollTopBtn = document.getElementById('scrollTop');
+    const progressBar = document.getElementById('progressBar');
+
+    providerBadge.textContent = provider;
+
+    if (!file) {
+      contentEl.innerHTML = '<div class="error"><h2>No file specified</h2><p><a href="index.html" style="color:#60a5fa">Return to index</a></p></div>';
+    } else {
+      fetch(file)
+        .then(r => {
+          if (!r.ok) throw new Error('File not found');
+          return r.text();
+        })
+        .then(md => {
+          const html = marked.parse(md);
+          contentEl.innerHTML = html;
+
+          // Set page title from first h1
+          const firstH1 = contentEl.querySelector('h1');
+          if (firstH1) {
+            document.title = firstH1.textContent;
+            docTitle.textContent = firstH1.textContent;
+          }
+
+          // Build table of contents
+          const headings = contentEl.querySelectorAll('h2, h3, h4');
+          headings.forEach((h, i) => {
+            const id = 'heading-' + i;
+            h.id = id;
+            const a = document.createElement('a');
+            a.href = '#' + id;
+            a.textContent = h.textContent;
+            a.className = 'depth-' + h.tagName[1];
+            a.addEventListener('click', () => { tocPanel.classList.remove('open'); });
+            tocPanel.appendChild(a);
+          });
+
+          if (headings.length === 0) {
+            tocToggle.style.display = 'none';
+          }
+        })
+        .catch(err => {
+          contentEl.innerHTML = `<div class="error"><h2>Failed to load</h2><p>${err.message}</p><p><a href="index.html" style="color:#60a5fa">Return to index</a></p></div>`;
+        });
+    }
+
+    // TOC toggle
+    tocToggle.addEventListener('click', () => {
+      tocPanel.classList.toggle('open');
+    });
+
+    // Close TOC on outside click
+    document.addEventListener('click', (e) => {
+      if (!tocPanel.contains(e.target) && e.target !== tocToggle) {
+        tocPanel.classList.remove('open');
+      }
+    });
+
+    // Scroll to top button
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+
+      // Reading progress
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+      progressBar.style.width = progress + '%';
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
